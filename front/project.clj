@@ -1,55 +1,58 @@
 (defproject front "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojurescript "1.10.238"]
+                 [reagent "0.7.0"]
+                 [re-frame "0.10.5"]
+                 [com.andrewmcveigh/cljs-time "0.5.2"]
+                 [org.clojure/core.async "0.2.391"]
+                 [re-com "2.1.0"]
+                 [secretary "1.2.3"]]
 
-  :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.10.312"]
-                 [reagent "0.8.1"]]
+  :plugins [[lein-cljsbuild "1.1.7"]]
 
-  :plugins [[lein-cljsbuild "1.1.5"]
-            [lein-figwheel "0.5.16"]]
+  :min-lein-version "2.5.3"
 
-  :min-lein-version "2.5.0"
-  :clean-targets ^{:protect false}
-  [:target-path
-   [:cljsbuild :builds :app :compiler :output-dir]
-   [:cljsbuild :builds :app :compiler :output-to]]
+  :source-paths ["src/clj" "src/cljs"]
 
-  :resource-paths ["public"]
+  :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
 
-  :figwheel {:http-server-root "."
-             :nrepl-port 7002
-             :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
-             :css-dirs ["public/css"]}
+  :figwheel {:css-dirs ["resources/public/css"]}
 
-  :cljsbuild {:builds {:app
-                       {:source-paths ["src" "env/dev/cljs"]
-                        :compiler
-                        {:main "front.dev"
-                         :output-to "public/js/app.js"
-                         :output-dir "public/js/out"
-                         :asset-path   "js/out"
-                         :source-map true
-                         :optimizations :none
-                         :pretty-print  true}
-                        :figwheel
-                        {:on-jsload "front.core/mount-root"
-                         :open-urls ["http://localhost:3449/index.html"]}}
-                       :release
-                       {:source-paths ["src" "env/prod/cljs"]
-                        :compiler
-                        {:output-to "public/js/app.js"
-                         :output-dir "public/js/release"
-                         :asset-path   "js/out"
-                         :optimizations :advanced
-                         :pretty-print false}}}}
+  :profiles
+  {:dev
+   {:dependencies [[binaryage/devtools "0.9.10"]
+                   [day8.re-frame/re-frame-10x "0.3.3"]
+                   [day8.re-frame/tracing "0.5.1"]]
 
-  :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
+    :plugins      [[lein-figwheel "0.5.16"]]}
+   :prod { :dependencies [[day8.re-frame/tracing-stubs "0.5.1"]]}}
 
-  :profiles {:dev {:source-paths ["src" "env/dev/clj"]
-                   :dependencies [[binaryage/devtools "0.9.7"]
-                                  [figwheel-sidecar "0.5.16"]
-                                  [org.clojure/tools.nrepl "0.2.13"]
-                                  [com.cemerick/piggieback "0.2.2"]]}})
+  :cljsbuild
+  {:builds
+   [{:id           "dev"
+     :source-paths ["src/cljs"]
+     :figwheel     {:on-jsload "front.core/mount-root"}
+     :compiler     {:main                 front.core
+                    :output-to            "resources/public/js/compiled/app.js"
+                    :output-dir           "resources/public/js/compiled/out"
+                    :asset-path           "js/compiled/out"
+                    :source-map-timestamp true
+                    :preloads             [devtools.preload
+                                           day8.re-frame-10x.preload]
+                    :closure-defines      {"re_frame.trace.trace_enabled_QMARK_" true
+                                           "day8.re_frame.tracing.trace_enabled_QMARK_" true}
+                    :external-config      {:devtools/config {:features-to-install :all}}
+                    }}
+
+    {:id           "min"
+     :source-paths ["src/cljs"]
+     :compiler     {:main            front.core
+                    :output-to       "resources/public/js/compiled/app.js"
+                    :optimizations   :advanced
+                    :closure-defines {goog.DEBUG false}
+                    :pretty-print    false}}
+
+
+    ]}
+
+  )

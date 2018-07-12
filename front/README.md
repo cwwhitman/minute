@@ -1,19 +1,26 @@
+# front
 
-### Development mode
+A [re-frame](https://github.com/Day8/re-frame) application designed to ... well, that part is up to you.
 
-To start the Figwheel compiler, navigate to the project folder and run the following command in the terminal:
+## Development Mode
 
-```
-lein figwheel
-```
-
-Figwheel will automatically push cljs changes to the browser.
-Once Figwheel starts up, you should be able to open the `public/index.html` page in the browser.
-
-
-### Building for production
+### Run application:
 
 ```
 lein clean
-lein package
+lein figwheel dev
+```
+
+Figwheel will automatically push cljs changes to the browser.
+
+Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
+
+## Production Build
+
+
+To compile clojurescript to javascript:
+
+```
+lein clean
+lein cljsbuild once min
 ```
