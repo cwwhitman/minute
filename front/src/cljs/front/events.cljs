@@ -10,7 +10,7 @@
  (fn-traced [_ _]
    db/default-db))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
  ::set-active-panel
- (fn-traced [db [_ active-panel]]
-   (assoc db :active-panel active-panel)))
+ (fn-traced [cofx [_ active-panel]]
+            {:db (assoc (:db cofx) :active-panel active-panel)}))
