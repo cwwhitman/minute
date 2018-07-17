@@ -7,6 +7,12 @@
  (fn [db]
    (:name db)))
 
+
+(re-frame/reg-sub
+ ::items-currently-selected
+ (fn [db _]
+   (:main db)))
+
 (re-frame/reg-sub
  ::active-panel
  (fn [db _]
