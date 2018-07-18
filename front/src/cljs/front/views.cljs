@@ -17,15 +17,15 @@
    "go to About Page"])
 
 (defn row [info]
-  [:div.test info])
+  [:div.test (str info)])
 
 (defn list-of-items []
-  (let [items (re-frame/subscribe [::subs/items-currently-selected])]
+  (let [items (re-frame/subscribe [::subs/names-currently-selected])]
     (fn []
         [:div
             [:ol
                 (for [item @items]
-                    [:li [row item]])]])))
+                    ^{:key item} [:li [row item]])]])))
                      
 
 (defn home-panel []
