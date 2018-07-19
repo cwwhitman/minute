@@ -1,3 +1,19 @@
-.test {
-    backgrount: pink;
+
+.container {
+	padding: 0px;
+}
+
+.item {
+	padding: 2px;
+	padding-left: 10px;
+	background: #DAEAEF;
+	margin: 0px;
+	border-style: dashed;
+	border-width: 1px;
+	margin-top: -1px;
+	border-color: #9DBDC6;
+}
+
+.highlighted {
+	background: #9DBDC6;
 }

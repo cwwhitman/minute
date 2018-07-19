@@ -6,6 +6,7 @@
    [front.routes :as routes]
    [front.views :as views]
    [front.config :as config]
+   [re-pressed.core :as rp]
    ))
 
 
@@ -22,5 +23,7 @@
 (defn ^:export init []
   (routes/app-routes)
   (re-frame/dispatch-sync [::events/initialize-db])
+  (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keypress"])
+
   (dev-setup)
   (mount-root))

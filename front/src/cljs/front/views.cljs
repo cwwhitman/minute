@@ -1,8 +1,10 @@
 (ns front.views
   (:require
    [re-frame.core :as re-frame]
+   [re-pressed.core :as rp]
    [front.subs :as subs]))
-   
+;; keyboard
+
 
 ;; home
 
@@ -13,8 +15,11 @@
 
 (defn link-to-about-page []
   [:a.btn
-   {:href "#/about"}
-   "go to About Page"])
+   {:on-click #(re-frame/dispatch [:down])} "go to about page"])
+
+(defn link-to-about-page-2 []
+  [:a.btn
+   {:on-click #(re-frame/dispatch [:up])} "go to other page"])
 
 (defn row [info]
   [:div.test info])
@@ -22,20 +27,24 @@
 (defn list-of-items []
   (let [items (re-frame/subscribe [::subs/names-currently-selected])
         selected (re-frame/subscribe [::subs/data-currently-previewing])]
-    (fn []
-        [:div.c
-            [:div.container.card
-                (for [item @items]
-                  ^{:key item} [:div.item {:class (if (= item @selected) "highlighted")}
-                                [row item]])]])))
-                     
+    [:div.c
+     [:div.container.card
+      (doall
+        (for [item @items :let [selected @selected]]
+            ^{:key item} [:div.item {:class (if (= item selected) "highlighted")}
+                            [row item]]))]]))
+
 
 (defn home-panel []
   [:div
+
+
+
    [home-title]
    [list-of-items]
-   [link-to-about-page]])
-    
+   [link-to-about-page]
+   [link-to-about-page-2]])
+
 ;; about, unused until later
 
 (defn about-title []
