@@ -12,15 +12,16 @@ block morning {
 
 block day {
 	  if(Global.today in 'MWTThF') {
-		morning()
+		morning().at(8h, am)
 		commute()
 		work()
 		commute_home()
 		practice_typing()
 		free_time()
 	  } else {
-	  	morning()
-		do_tasks().breaks_level(Global.HIGH)
+	  	morning().at(9h30m, pm)
+		do_tasks().breaks_level(Global.HIGH).max(3h20m).min(30m)
+		entertainment()
 	  }
 }
 
@@ -37,6 +38,7 @@ block do_tasks {
 # android app that lets you follow along your schedule, exporting data that you can use to
 # manually, or automatically maybe tune your schedule for furthur days, give you score on how close you followed it
 # app that notifies you when your schedule is changing
+# connect to reminders (reminders are separate from events)
 
 ## features that make this more powerful than normal calendar software
 # you can constrain a complex group of events, and it can tell you if its impossible
@@ -46,3 +48,4 @@ block do_tasks {
 # makes it easy to create a schedule for yourself when you don't have a central lifestyle to work around
 # (no job/school forcing certain wakeup/commute patterns), which is useful because structure is important
 # it is extensible to add support for more things (google calendar events are not)
+# potential support for using genetic algs/nn's/heuristics to generate schedules
