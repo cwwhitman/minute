@@ -14,6 +14,12 @@
 
 
 (re-frame/reg-sub
+ :currently-previewing
+ (fn [db]
+   (:preview-frame-id db)))
+
+
+(re-frame/reg-sub
  :id->data
  (fn [db]
    (:id->data db)))
@@ -33,6 +39,13 @@
  (fn [[currently-selected id->data] _]
    (for [child (:children currently-selected)]
      (:data (get id->data child)))))
+
+(re-frame/reg-sub
+ ::data-currently-previewing
+ :<- [:currently-previewing]
+ :<- [:id->data]
+ (fn [[currently-previewing id->data] _]
+   (:data (get id->data currently-previewing))))
 
 (re-frame/reg-sub
  ::active-panel

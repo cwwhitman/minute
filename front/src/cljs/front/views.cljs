@@ -17,15 +17,17 @@
    "go to About Page"])
 
 (defn row [info]
-  [:div.test (str info)])
+  [:div.test info])
 
 (defn list-of-items []
-  (let [items (re-frame/subscribe [::subs/names-currently-selected])]
+  (let [items (re-frame/subscribe [::subs/names-currently-selected])
+        selected (re-frame/subscribe [::subs/data-currently-previewing])]
     (fn []
-        [:div
-            [:ol
+        [:div.c
+            [:div.container.card
                 (for [item @items]
-                    ^{:key item} [:li [row item]])]])))
+                  ^{:key item} [:div.item {:class (if (= item @selected) "highlighted")}
+                                [row item]])]])))
                      
 
 (defn home-panel []
