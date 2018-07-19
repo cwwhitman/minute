@@ -1,5 +1,48 @@
-projects
-food
-homework
-events
-daylies
+# example schedule file
+# grammar/syntax subject to extreme change
+
+block morning {
+	  brush_teeth.dur(10m)
+	  do_stretches.dur(5m).break(3m)
+	  eat_breakfast.dur(20m)
+	  take_shower.dur(20m)
+}.breaks(3m)
+
+# other block options could be .random_order(), .choose(3), breaks(3m + 2m * n) where n is the event number, whatever else could be useful
+
+block day {
+	  if(Global.today in 'MWTThF') {
+		morning()
+		commute()
+		work()
+		commute_home()
+		practice_typing()
+		free_time()
+	  } else {
+	  	morning()
+		do_tasks().breaks_level(Global.HIGH)
+	  }
+}
+
+block do_tasks {
+	  # takes in tasks from some other task db (evernote, org files, taskwarrior, todo.txt, etc)
+	  # and orders them up, with lots of breaks
+	  # have support for priority queue of tasks
+}
+
+
+## advanced features
+# connect to gcal and import events/work around them
+# export to gcal
+# android app that lets you follow along your schedule, exporting data that you can use to
+# manually, or automatically maybe tune your schedule for furthur days, give you score on how close you followed it
+# app that notifies you when your schedule is changing
+
+## features that make this more powerful than normal calendar software
+# you can constrain a complex group of events, and it can tell you if its impossible
+-- example
+# you can have optional/priority levels of events to make sure you only do important things
+# you can have a precise schedule with little effort
+# makes it easy to create a schedule for yourself when you don't have a central lifestyle to work around
+# (no job/school forcing certain wakeup/commute patterns), which is useful because structure is important
+# it is extensible to add support for more things (google calendar events are not)
