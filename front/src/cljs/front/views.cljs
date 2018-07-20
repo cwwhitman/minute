@@ -24,26 +24,30 @@
 (defn row [info]
   [:div.test info])
 
-(defn list-of-items []
-  (let [items (re-frame/subscribe [::subs/names-currently-selected])
-        selected (re-frame/subscribe [::subs/data-currently-previewing])]
-    [:div.c
-     [:div.container.card
-      (doall
-        (for [item @items :let [selected @selected]]
-            ^{:key item} [:div.item {:class (if (= item selected) "highlighted")}
-                            [row item]]))]]))
+(defn list-of [items selected]
+  [:div.c
+   [:div.container.card
+    (doall
+     (for [item @items :let [selected @selected]]
+       ^{:key item} [:div.item {:class (if (= item selected) "highlighted")}
+                     [row item]]))]])
 
+
+(defn selected []
+  (let [items (re-frame/subscribe [::subs/titles-currently-selected])
+        selected (re-frame/subscribe [::subs/title-currently-previewing])]
+    [list-of items selected]))
+
+
+(defn preview []
+  (let [items (re-frame/subscribe [::subs/titles-currently-previewing])]
+    [list-of items items])) ;; very sloppy and bad
 
 (defn home-panel []
   [:div
-
-
-
    [home-title]
-   [list-of-items]
-   [link-to-about-page]
-   [link-to-about-page-2]])
+   [selected]
+   [preview]])
 
 ;; about, unused until later
 
