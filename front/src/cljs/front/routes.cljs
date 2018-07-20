@@ -35,9 +35,12 @@
     {:event-keys [
                   [
                    [:down]
-                   [{:which 97}]]]
-     :clear-keys []
-     :always-listen-keys []
+                   [{:which 38}]]
+                  [
+                   [:up]
+                   [{:which 40}]]]
+     :clear-keys [[{:which 27}]]
+     :always-listen-keys [{:which 97}]
      :prevent-default-keys []}])
 
 

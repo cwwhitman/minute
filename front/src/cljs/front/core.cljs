@@ -21,9 +21,9 @@
                   (.getElementById js/document "app")))
 
 (defn ^:export init []
-  (routes/app-routes)
   (re-frame/dispatch-sync [::events/initialize-db])
-  (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keypress"])
+  (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
+  (routes/app-routes)
 
   (dev-setup)
   (mount-root))
