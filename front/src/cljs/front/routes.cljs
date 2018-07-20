@@ -20,15 +20,6 @@
 
 (defn app-routes []
   (secretary/set-config! :prefix "#")
-  (re-frame/dispatch
-   [::rp/set-keydown-rules
-    {:event-keys [
-                  [
-                   [:down]
-                   [{:which 97}]]]}
-    :clear-keys []
-    :always-listen-keys []
-    :prevent-default-keys []])
   ;; --------------------
   ;; define routes here
   (defroute "/" []
@@ -36,7 +27,18 @@
     )
 
   (defroute "/about" []
-    (re-frame/dispatch [::events/set-active-panel :about-panel]))
+    (re-frame/dispatch [::events/set-active-panel :about-panel])
+    )
+
+  (re-frame/dispatch
+   [::rp/set-keydown-rules
+    {:event-keys [
+                  [
+                   [:down]
+                   [{:which 97}]]]
+     :clear-keys []
+     :always-listen-keys []
+     :prevent-default-keys []}])
 
 
   ;; --------------------
