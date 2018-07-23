@@ -34,6 +34,9 @@
    [::rp/set-keydown-rules
     {:event-keys [
                   [
+                   [:in]
+                   [{:which 13}]]
+                  [
                    [:down]
                    [{:which 38}]]
                   [

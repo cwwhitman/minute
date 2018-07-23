@@ -45,10 +45,18 @@
         selected (re-frame/subscribe [::subs/preview-frame-visual])]
     [list-of-2 items selected]))
 
+(defn empty-list []
+  [:div.c
+   [:div.container.card
+    [row "no children"]]])
 
 (defn preview []
   (let [items (re-frame/subscribe [::subs/titles-currently-previewing])]
-    [list-of items items])) ;; very sloppy and bad
+    (if (> (count @items) 0)
+      [list-of items items] ;; very sloppy and bad
+      [empty-list])))
+
+     
 
 (defn home-panel []
   [:div

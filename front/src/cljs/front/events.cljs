@@ -23,7 +23,7 @@
 
 (re-frame/reg-event-fx
  :up
- [ (re-frame/inject-cofx :length-of-selected)]
+ [(re-frame/inject-cofx :length-of-selected)]
  (fn-traced [cofx _]
             (let [db (:db cofx)
                   len (dec (:length-of-selected cofx))]
@@ -33,3 +33,19 @@
  :length-of-selected
  (fn [cofx _]
    (assoc cofx :length-of-selected @(re-frame/subscribe [::subs/length-of-selected]))))
+
+(re-frame/reg-event-fx
+ :in
+ [(re-frame/inject-cofx :currently-previewing)]
+ (fn-traced [cofx _]
+            (let [db (:db cofx)
+                  currently-previewing (:currently-previewing cofx)]
+              {:db (-> db
+                       (assoc :selected-frame-id currently-previewing)
+                       (update :navigation-stack conj currently-previewing))})))
+                          
+
+(re-frame/reg-cofx
+ :currently-previewing
+ (fn [cofx _]
+   (assoc cofx :currently-previewing @(re-frame/subscribe [::subs/currently-previewing]))))
