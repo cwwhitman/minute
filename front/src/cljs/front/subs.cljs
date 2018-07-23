@@ -29,8 +29,6 @@
  (fn [[items-currently-selected preview-frame-visual] _]
    (get (:children items-currently-selected) preview-frame-visual)))
 
-
-
 (re-frame/reg-sub
  :id->data
  (fn [db]
@@ -50,6 +48,12 @@
  (fn [[currently-previewing id->data] _]
    (for [id (:children (get id->data currently-previewing))]
      (:data (get id->data id))))) ;; I wish this did :data in a different sub, but oh well
+
+(re-frame/reg-sub
+ ::length-of-selected
+ :<- [::titles-currently-selected]
+ (fn [titles _]
+   (count titles)))
 
 (re-frame/reg-sub
  ::titles-currently-selected

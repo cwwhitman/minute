@@ -2,6 +2,7 @@
   (:require
    [re-frame.core :as re-frame]
    [front.db :as db]
+   [front.subs :as subs]
    [day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
    
 
@@ -18,9 +19,19 @@
 (re-frame/reg-event-db
  :down
  (fn-traced [db _]
-            (update db :preview-frame-visual dec)))
+            (update db :preview-frame-visual #(max (dec %) 0))))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
  :up
- (fn-traced [db _]
-            (update db :preview-frame-visual inc)))
+ [ (re-frame/inject-cofx :length-of-selected)]
+ (fn-traced [cofx _]
+;;            (let [len (:)])
+            (let [db (:db cofx)
+                  len (:length-of-selected cofx)]
+              (console.log cofx)
+              {:db (update db :preview-frame-visual #(min (inc %) len))})))
+
+(re-frame/reg-cofx
+ :length-of-selected
+ (fn [cofx _]
+   (assoc cofx :length-of-selected (re-frame/subscribe [::subs/length-of-selected]))))
