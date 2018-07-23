@@ -25,13 +25,11 @@
  :up
  [ (re-frame/inject-cofx :length-of-selected)]
  (fn-traced [cofx _]
-;;            (let [len (:)])
             (let [db (:db cofx)
-                  len (:length-of-selected cofx)]
-              (console.log cofx)
+                  len (dec (:length-of-selected cofx))]
               {:db (update db :preview-frame-visual #(min (inc %) len))})))
 
 (re-frame/reg-cofx
  :length-of-selected
  (fn [cofx _]
-   (assoc cofx :length-of-selected (re-frame/subscribe [::subs/length-of-selected]))))
+   (assoc cofx :length-of-selected @(re-frame/subscribe [::subs/length-of-selected]))))
