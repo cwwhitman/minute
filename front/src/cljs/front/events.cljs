@@ -18,9 +18,9 @@
 (re-frame/reg-event-db
  :down
  (fn-traced [db _]
-            (update db :preview-frame-id dec)))
+            (update db :preview-frame-visual dec)))
 
 (re-frame/reg-event-db
  :up
  (fn-traced [db _]
-            (update db :preview-frame-id inc)))
+            (update db :preview-frame-visual inc)))

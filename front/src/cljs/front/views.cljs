@@ -32,11 +32,18 @@
        ^{:key item} [:div.item {:class (if (= item selected) "highlighted")}
                      [row item]]))]])
 
+(defn list-of-2 [items selected]
+  [:div.c
+   [:div.container.card
+    (let [func (fn [[i item]]
+                ^{:key item} [:div.item {:class (if (= i @selected) "highlighted")} [row item]])]
+        (doall (map (comp func vector) (range) @items)))]])
+
 
 (defn selected []
   (let [items (re-frame/subscribe [::subs/titles-currently-selected])
-        selected (re-frame/subscribe [::subs/title-currently-previewing])]
-    [list-of items selected]))
+        selected (re-frame/subscribe [::subs/preview-frame-visual])]
+    [list-of-2 items selected]))
 
 
 (defn preview []

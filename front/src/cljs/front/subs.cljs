@@ -2,6 +2,16 @@
   (:require
    [re-frame.core :as re-frame]))
 
+(re-frame/reg-sub ;; for other subs
+ :preview-frame-visual
+ (fn [db]
+   (:preview-frame-visual db)))
+
+(re-frame/reg-sub ;; for view
+ ::preview-frame-visual
+ (fn [db]
+   (:preview-frame-visual db)))
+
 (re-frame/reg-sub
  ::name
  (fn [db]
@@ -12,11 +22,13 @@
  (fn [db]
    (:selected-frame-id db)))
 
-
 (re-frame/reg-sub
- :currently-previewing
- (fn [db]
-   (:preview-frame-id db)))
+ ::currently-previewing
+ :<- [::items-currently-selected]
+ :<- [::preview-frame-visual]
+ (fn [[items-currently-selected preview-frame-visual] _]
+   (get (:children items-currently-selected) preview-frame-visual)))
+
 
 
 (re-frame/reg-sub
@@ -33,7 +45,7 @@
 
 (re-frame/reg-sub
  ::titles-currently-previewing
- :<- [:currently-previewing]
+ :<- [::currently-previewing]
  :<- [:id->data]
  (fn [[currently-previewing id->data] _]
    (for [id (:children (get id->data currently-previewing))]
