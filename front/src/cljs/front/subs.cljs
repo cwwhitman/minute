@@ -82,3 +82,13 @@
  ::active-panel
  (fn [db _]
    (:active-panel db)))
+
+(re-frame/reg-sub
+ ::navigation-stack-titles
+ (fn [db]
+   (:navigation-stack-titles db)))
+
+(re-frame/reg-sub
+ ::navigation-stack-ids
+ (fn [db]
+   (:navigation-stack db)))

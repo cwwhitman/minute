@@ -35,7 +35,7 @@
    (assoc cofx :length-of-selected @(re-frame/subscribe [::subs/length-of-selected]))))
 
 (re-frame/reg-event-fx
- :on
+ :in
  [(re-frame/inject-cofx :currently-previewing)]
  (fn-traced [cofx _]
             (let [db (:db cofx)
@@ -44,8 +44,10 @@
               (if (empty? (get-in id->data [currently-previewing :children])) ;; bad, this should not be in view
                 {:db db}
                 {:db (-> db
+                         (assoc :preview-frame-visual 0)
                          (assoc :selected-frame-id currently-previewing)
-                         (update :navigation-stack conj (:selected-frame-id db)))}))))
+                         (update :navigation-stack conj (:selected-frame-id db))
+                         (update :navigation-stack-titles conj (get-in id->data [currently-previewing :data])))}))))
                      
                           
 
@@ -59,9 +61,16 @@
 (re-frame/reg-event-db
  :out
  (fn-traced [db _]
-            (let [stack (:navigation-stack db)]
+            (let [stack (:navigation-stack db)
+                  title-stack (:navigation-stack-titles db)]
               (if (empty? stack)
                 db
                 (-> db
+                    (assoc :navigation-stack-titles (pop title-stack))
                     (assoc :navigation-stack (pop stack))
                     (assoc :selected-frame-id (last stack)))))))
+
+(re-frame/reg-event-db
+ :go ;; TODO needs to update the navigation stack
+ (fn-traced [db [_ id]]
+            (assoc db :selected-frame-id id)))

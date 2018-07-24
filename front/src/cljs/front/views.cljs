@@ -53,15 +53,27 @@
 
 (defn preview []
   (let [items (re-frame/subscribe [::subs/titles-currently-previewing])]
-    (if (> (count @items) 0)
+    (if (not (empty? @items))
       [list-of items items] ;; very sloppy and bad
       [empty-list])))
 
-     
+(defn path []
+  (let [path @(re-frame/subscribe [::subs/navigation-stack-titles])
+        path-ids @(re-frame/subscribe [::subs/navigation-stack-ids])]
+    [:div
+        ;; [:a.btn
+            ;; {:on-click #(re-frame/dispatch [:go 0])} "press me or die"
+     [:div.container.card.m2.pad
+      (for [[title id] (map vector (cons "home" path) path-ids)]
+        [:a {:on-click #(re-frame/dispatch [:go id])}
+         (str title " / ")])
+      (last path)]]))
+      
 
 (defn home-panel []
   [:div
     [home-title]
+    [path]
    [:div.row
     [selected]
     [preview]]])
