@@ -4,12 +4,12 @@
    [front.db :as db]
    [front.subs :as subs]
    [day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
-   
+
 
 (re-frame/reg-event-db
  ::initialize-db
  (fn-traced [_ _]
-   db/default-db))
+            db/default-db))
 
 (re-frame/reg-event-fx
  ::set-active-panel
@@ -48,8 +48,8 @@
                          (assoc :selected-frame-id currently-previewing)
                          (update :navigation-stack conj (:selected-frame-id db))
                          (update :navigation-stack-titles conj (get-in id->data [currently-previewing :data])))}))))
-                     
-                          
+
+
 
 (re-frame/reg-cofx
  :currently-previewing
@@ -73,4 +73,13 @@
 (re-frame/reg-event-db
  :go ;; TODO needs to update the navigation stack
  (fn-traced [db [_ id]]
-            (assoc db :selected-frame-id id)))
+            (let [curstack (:navigation-stack db)
+                  newstack (loop [stack curstack n id]
+                             (if (= (peek stack) n)
+                               (pop stack)
+                               (recur (pop stack) n)))] ;; NEXT debug this
+              (-> db
+                  (assoc :selected-frame-id id)
+                  (assoc :navigation-stack-titles
+                         (take (count newstack) (:navigation-stack-titles db)))
+                  (assoc :navigation-stack newstack)))))
