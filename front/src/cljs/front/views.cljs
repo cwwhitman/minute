@@ -24,15 +24,15 @@
 (defn row [item]
   [:div.test (:data item)])
 
-(defn list-of [items selected]
+(defn list-of [items ids]
   [:div.c.6.col
    [:div.container.card
     (doall
-     (for [item @items :let [selected @selected]]
-       ^{:key item} [:div.item {:class (if (= item selected) "highlighted")}
+     (for [[item id] (map vector @items @ids)]
+       ^{:key id} [:div.item
                      [row item]]))]])
 
-(defn list-of-2 [items ids selected]
+(defn list-of-select [items ids selected]
   [:div.c.6.col
    [:div.container.card
     (let [func (fn [[i item id]]
@@ -44,7 +44,7 @@
   (let [items (re-frame/subscribe [::subs/items-in-currently-selected])
         selected (re-frame/subscribe [::subs/preview-frame-visual])
         ids (re-frame/subscribe [::subs/ids-in-currently-selected])]
-    [list-of-2 items ids selected]))
+    [list-of-select items ids selected]))
 
 (defn empty-list []
   [:div.c.6.col
@@ -53,9 +53,10 @@
         
 
 (defn preview []
-  (let [items (re-frame/subscribe [::subs/items-currently-previewing])]
+  (let [items (re-frame/subscribe [::subs/items-currently-previewing])
+        ids (re-frame/subscribe [::subs/ids-currently-previewing])]
     (if (not (empty? @items))
-      [list-of items items] ;; very sloppy and bad
+      [list-of items ids] ;; very sloppy and bad
       [empty-list])))
 
 (defn path []
@@ -65,14 +66,14 @@
         ;; [:a.btn
             ;; {:on-click #(re-frame/dispatch [:go 0])} "press me or die"
      [:div.container.card.m2.pad
-      (for [[title id] (map vector (cons "home" path) path-ids)]
-        [:a {:on-click #(re-frame/dispatch [:go id])}
-         (str title " / ")])
+      (for [[title id render-id] (map vector (cons "home" path) path-ids (range))]
+        ^{:key render-id} [:a {:on-click #(re-frame/dispatch [:go id])}
+                            (str title " / ")])
       (last path)]]))
       
 
 (defn debug-button []
-  [:a.btn {:on-click #(re-frame/dispatch [:add])} "click to test"])
+  [:a.btn {:on-click #(re-frame/dispatch [:add-neighbor])} "click to test"])
 
 (defn home-panel []
   [:div

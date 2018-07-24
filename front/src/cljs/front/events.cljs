@@ -89,7 +89,7 @@
   {:data data :children []})
 
 (re-frame/reg-event-db
- :add
+ :add-neighbor
  (fn-traced [db _]
             (let [id (:max-id db)
                   current (:selected-frame-id db)]
