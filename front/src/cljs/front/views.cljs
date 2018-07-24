@@ -25,7 +25,7 @@
   [:div.test info])
 
 (defn list-of [items selected]
-  [:div.c
+  [:div.c.6.col
    [:div.container.card
     (doall
      (for [item @items :let [selected @selected]]
@@ -33,7 +33,7 @@
                      [row item]]))]])
 
 (defn list-of-2 [items selected]
-  [:div.c
+  [:div.c.6.col
    [:div.container.card
     (let [func (fn [[i item]]
                 ^{:key item} [:div.item {:class (if (= i @selected) "highlighted")} [row item]])]
@@ -46,9 +46,10 @@
     [list-of-2 items selected]))
 
 (defn empty-list []
-  [:div.c
-   [:div.container.card
-    [row "no children"]]])
+  [:div.c.6.col
+   [:div
+    [:div]]])
+        
 
 (defn preview []
   (let [items (re-frame/subscribe [::subs/titles-currently-previewing])]
@@ -60,9 +61,10 @@
 
 (defn home-panel []
   [:div
-   [home-title]
-   [selected]
-   [preview]])
+    [home-title]
+   [:div.row
+    [selected]
+    [preview]]])
 
 ;; about, unused until later
 

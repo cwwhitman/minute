@@ -35,7 +35,7 @@
    (assoc cofx :length-of-selected @(re-frame/subscribe [::subs/length-of-selected]))))
 
 (re-frame/reg-event-fx
- :in
+ :on
  [(re-frame/inject-cofx :currently-previewing)]
  (fn-traced [cofx _]
             (let [db (:db cofx)
@@ -44,8 +44,8 @@
               (if (empty? (get-in id->data [currently-previewing :children])) ;; bad, this should not be in view
                 {:db db}
                 {:db (-> db
-                        (assoc :selected-frame-id currently-previewing)
-                        (update :navigation-stack conj (:selected-frame-id db)))}))))
+                         (assoc :selected-frame-id currently-previewing)
+                         (update :navigation-stack conj (:selected-frame-id db)))}))))
                      
                           
 
@@ -59,6 +59,9 @@
 (re-frame/reg-event-db
  :out
  (fn-traced [db _]
-            (-> db
-                (assoc :navigation-stack (pop (:navigation-stack db)))
-                (assoc :selected-frame-id (last (:navigation-stack db))))))
+            (let [stack (:navigation-stack db)]
+              (if (empty? stack)
+                db
+                (-> db
+                    (assoc :navigation-stack (pop stack))
+                    (assoc :selected-frame-id (last stack)))))))
