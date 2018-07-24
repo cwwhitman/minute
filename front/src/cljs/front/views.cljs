@@ -32,18 +32,19 @@
        ^{:key item} [:div.item {:class (if (= item selected) "highlighted")}
                      [row item]]))]])
 
-(defn list-of-2 [items selected]
+(defn list-of-2 [items ids selected]
   [:div.c.6.col
    [:div.container.card
-    (let [func (fn [[i item]]
-                ^{:key item} [:div.item {:class (if (= i @selected) "highlighted")} [row item]])]
-        (doall (map (comp func vector) (range) @items)))]])
+    (let [func (fn [[i item id]]
+                ^{:key id} [:div.item {:class (if (= i @selected) "highlighted")} [row item]])]
+        (doall (map (comp func vector) (range) @items @ids)))]])
 
 
 (defn selected []
   (let [items (re-frame/subscribe [::subs/titles-currently-selected])
-        selected (re-frame/subscribe [::subs/preview-frame-visual])]
-    [list-of-2 items selected]))
+        selected (re-frame/subscribe [::subs/preview-frame-visual])
+        ids (re-frame/subscribe [::subs/ids-currently-selected])]
+    [list-of-2 items ids selected]))
 
 (defn empty-list []
   [:div.c.6.col
@@ -70,10 +71,13 @@
       (last path)]]))
       
 
+(defn debug-button []
+  [:a.btn {:on-click #(re-frame/dispatch [:add])} "click to test"])
 (defn home-panel []
   [:div
     [home-title]
     [path]
+    [debug-button]
    [:div.row
     [selected]
     [preview]]])

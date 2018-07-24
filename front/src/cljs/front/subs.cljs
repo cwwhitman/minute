@@ -63,6 +63,13 @@
    (for [child (:children currently-selected)]
      (:data (get id->data child)))))
 
+(re-frame/reg-sub
+ ::ids-currently-selected
+ :<- [::items-currently-selected]
+ :<- [:id->data]
+ (fn [[currently-selected id->data] _]
+   (:children currently-selected)))
+
 ;;(re-frame/reg-sub)
  ;;::titles-currently-previewing
  ;;:<- [::items-currently-previewing]

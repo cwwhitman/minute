@@ -77,9 +77,23 @@
                   newstack (loop [stack curstack n id]
                              (if (= (peek stack) n)
                                (pop stack)
-                               (recur (pop stack) n)))] ;; NEXT debug this
+                               (recur (pop stack) n)))]
               (-> db
                   (assoc :selected-frame-id id)
                   (assoc :navigation-stack-titles
                          (take (count newstack) (:navigation-stack-titles db)))
                   (assoc :navigation-stack newstack)))))
+
+
+(defn make-new-item [data]
+  {:data data :children []})
+
+(re-frame/reg-event-db
+ :add
+ (fn-traced [db _]
+            (let [id (:max-id db)
+                  current (:selected-frame-id db)]
+              (-> db
+                  (assoc :max-id (inc id))
+                  (update :id->data assoc id (make-new-item "child"))
+                  (update-in [:id->data current :children] conj id)))))       
