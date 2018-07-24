@@ -22,7 +22,11 @@
    {:on-click #(re-frame/dispatch [:up])} "go to other page"])
 
 (defn row [item]
-  [:div.test (:data item)])
+  [:div.rowt
+    [:div (:data item)]
+   (let [num (count (:children item))]
+     (if (pos? num)
+        [:div.right.small num]))])
 
 (defn list-of [items ids]
   [:div.c.6.col

@@ -22,3 +22,21 @@
 .highlighted {
 	background: #9DBDC6;
 }
+
+.right {
+	display: table-cell;
+	width: 5%;
+}
+
+.left {
+	display: table-cell;
+	width: 95%;
+}
+
+.rowt {
+	width: 100%;
+	display: table;
+	border-spacing: 1em 0;
+}
+
+;; TODO fix the weird spacing stuff
