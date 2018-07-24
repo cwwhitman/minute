@@ -23,16 +23,19 @@
   ;; --------------------
   ;; define routes here
   (defroute "/" []
-    (re-frame/dispatch [::events/set-active-panel :home-panel])
-    )
+    (re-frame/dispatch [::events/set-active-panel :home-panel]))
+  
 
   (defroute "/about" []
-    (re-frame/dispatch [::events/set-active-panel :about-panel])
-    )
+    (re-frame/dispatch [::events/set-active-panel :about-panel]))
+  
 
   (re-frame/dispatch
    [::rp/set-keydown-rules
     {:event-keys [
+                  [
+                   [:out]
+                   [{:which 27}]]
                   [
                    [:in]
                    [{:which 13}]]
@@ -42,7 +45,7 @@
                   [
                    [:up]
                    [{:which 40}]]]
-     :clear-keys [[{:which 27}]]
+     :clear-keys []
      :always-listen-keys [{:which 97}]
      :prevent-default-keys []}])
 

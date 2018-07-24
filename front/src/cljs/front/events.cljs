@@ -39,13 +39,26 @@
  [(re-frame/inject-cofx :currently-previewing)]
  (fn-traced [cofx _]
             (let [db (:db cofx)
+                  id->data (:id->data db)
                   currently-previewing (:currently-previewing cofx)]
-              {:db (-> db
-                       (assoc :selected-frame-id currently-previewing)
-                       (update :navigation-stack conj currently-previewing))})))
+              (if (empty? (get-in id->data [currently-previewing :children])) ;; bad, this should not be in view
+                {:db db}
+                {:db (-> db
+                        (assoc :selected-frame-id currently-previewing)
+                        (update :navigation-stack conj (:selected-frame-id db)))}))))
+                     
                           
 
 (re-frame/reg-cofx
  :currently-previewing
- (fn [cofx _]
+ (fn [cofx _] ;; bad because im not supposed to use a sub in
+   ;; an event handler if it's not in a view also, according to 
+   ;; https://github.com/vimsical/re-frame-utils/blob/master/src/vimsical/re_frame/cofx/inject.cljc
    (assoc cofx :currently-previewing @(re-frame/subscribe [::subs/currently-previewing]))))
+
+(re-frame/reg-event-db
+ :out
+ (fn-traced [db _]
+            (-> db
+                (assoc :navigation-stack (pop (:navigation-stack db)))
+                (assoc :selected-frame-id (last (:navigation-stack db))))))
