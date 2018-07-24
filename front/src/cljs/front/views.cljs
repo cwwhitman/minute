@@ -21,8 +21,8 @@
   [:a.btn
    {:on-click #(re-frame/dispatch [:up])} "go to other page"])
 
-(defn row [info]
-  [:div.test info])
+(defn row [item]
+  [:div.test (:data item)])
 
 (defn list-of [items selected]
   [:div.c.6.col
@@ -41,9 +41,9 @@
 
 
 (defn selected []
-  (let [items (re-frame/subscribe [::subs/titles-currently-selected])
+  (let [items (re-frame/subscribe [::subs/items-in-currently-selected])
         selected (re-frame/subscribe [::subs/preview-frame-visual])
-        ids (re-frame/subscribe [::subs/ids-currently-selected])]
+        ids (re-frame/subscribe [::subs/ids-in-currently-selected])]
     [list-of-2 items ids selected]))
 
 (defn empty-list []
@@ -53,7 +53,7 @@
         
 
 (defn preview []
-  (let [items (re-frame/subscribe [::subs/titles-currently-previewing])]
+  (let [items (re-frame/subscribe [::subs/items-currently-previewing])]
     (if (not (empty? @items))
       [list-of items items] ;; very sloppy and bad
       [empty-list])))
@@ -73,6 +73,7 @@
 
 (defn debug-button []
   [:a.btn {:on-click #(re-frame/dispatch [:add])} "click to test"])
+
 (defn home-panel []
   [:div
     [home-title]

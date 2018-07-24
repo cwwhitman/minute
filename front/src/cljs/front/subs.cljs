@@ -42,40 +42,40 @@
    (get id->data currently-selected)))
 
 (re-frame/reg-sub
- ::titles-currently-previewing
+ ::items-currently-previewing
  :<- [::currently-previewing]
  :<- [:id->data]
  (fn [[currently-previewing id->data] _]
    (for [id (:children (get id->data currently-previewing))]
-     (:data (get id->data id))))) ;; I wish this did :data in a different sub, but oh well
+     (get id->data id)))) ;; I wish this did :data in a different sub, but oh well
 
 (re-frame/reg-sub
  ::length-of-selected
- :<- [::titles-currently-selected]
+ :<- [::items-in-currently-selected]
  (fn [titles _]
    (count titles)))
 
 (re-frame/reg-sub
- ::titles-currently-selected
+ ::items-in-currently-selected
  :<- [::items-currently-selected]
  :<- [:id->data]
  (fn [[currently-selected id->data] _]
    (for [child (:children currently-selected)]
-     (:data (get id->data child)))))
+     (get id->data child))))
 
 (re-frame/reg-sub
- ::ids-currently-selected
+ ::ids-in-currently-selected
  :<- [::items-currently-selected]
  :<- [:id->data]
  (fn [[currently-selected id->data] _]
    (:children currently-selected)))
 
 ;;(re-frame/reg-sub)
- ;;::titles-currently-previewing
- ;;:<- [::items-currently-previewing]
- ;;(fn [items-currently-previewing _])
-   ;;(for [item items-currently-previewing])
-     ;;(:data item))))
+;;::titles-currently-previewing
+;;:<- [::items-currently-previewing]
+;;(fn [items-currently-previewing _])
+;;(for [item items-currently-previewing])
+;;(:data item))))
 
 
 (re-frame/reg-sub
