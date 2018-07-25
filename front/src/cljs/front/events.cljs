@@ -116,4 +116,12 @@
              (-> db
                  (assoc-in [:id->data currently-previewing :state] "edit"))}))
 
+(re-frame/reg-event-fx
+ :edit-save
+ [(re-frame/inject-cofx :currently-previewing)]
+ (fn-traced [{:keys [db currently-previewing]} [_ id new-data]]
+            {:db
+             (-> db
+                 (assoc-in [:id->data currently-previewing :state] "view")
+                 (assoc-in [:id->data currently-previewing :data] new-data))}))
 ;; NEXT add edit-save event

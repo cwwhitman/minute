@@ -31,13 +31,14 @@
         [:div.right.small num]))])
 
 (defn edit [item id] ;; adapted from re-frame todomvc example
-  (let [val (reagent/atom "st")
+  (let [val (reagent/atom (:data item))
         on-save #(re-frame/dispatch [:edit-save id %]) ;;NEXT implement this idea
         save #(let [v (-> @val str str/trim)]
                 (on-save v))]
     (fn [item id] ;; not 100% sure why I need this, read the docs on level 2/3 components
         [:input {:type "text"
                  :value @val
+                 :auto-focus true
                  :on-change #(reset! val (-> % .-target .-value))
                  :on-key-down #(case (.-which %)
                                  13 (save)
