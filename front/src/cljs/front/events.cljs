@@ -97,3 +97,13 @@
                   (assoc :max-id (inc id))
                   (update :id->data assoc id (make-new-item "child"))
                   (update-in [:id->data current :children] conj id)))))       
+
+(re-frame/reg-event-fx
+ :add-child
+ [(re-frame/inject-cofx :currently-previewing)]
+ (fn-traced [{:keys [db currently-previewing]} _]
+            (let [id (:max-id db)]
+              {:db (-> db
+                       (assoc :max-id (inc id))
+                       (update :id->data assoc id (make-new-item "child"))
+                       (update-in [:id->data currently-previewing :children] conj id))})))       

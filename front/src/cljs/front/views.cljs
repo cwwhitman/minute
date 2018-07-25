@@ -77,13 +77,16 @@
       
 
 (defn debug-button []
-  [:a.btn {:on-click #(re-frame/dispatch [:add-neighbor])} "click to test"])
+  [:a.btn {:on-click #(re-frame/dispatch [:add-neighbor])} "add-neighbor"])
+(defn debug-button-2 []
+  [:a.btn {:on-click #(re-frame/dispatch [:add-child])} "add-child"])
 
 (defn home-panel []
   [:div
     [home-title]
     [path]
     [debug-button]
+    [debug-button-2]
    [:div.row
     [selected]
     [preview]]])
