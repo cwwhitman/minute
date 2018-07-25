@@ -81,7 +81,7 @@
               (-> db
                   (assoc :selected-frame-id id)
                   (assoc :navigation-stack-titles
-                         (take (count newstack) (:navigation-stack-titles db)))
+                         (subvec (:navigation-stack-titles db) 0 (count newstack)))
                   (assoc :navigation-stack newstack)))))
 
 
