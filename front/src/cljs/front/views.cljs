@@ -30,7 +30,7 @@
      (if (pos? num)
         [:div.right.small num]))])
 
-(defn edit [item id] ;; adapted from re-frame todomvc example
+(defn edit-render [item id] ;; adapted from re-frame todomvc example
   (let [val (reagent/atom (:data item))
         on-save #(re-frame/dispatch [:edit-save id %]) ;;NEXT implement this idea
         save #(let [v (-> @val str str/trim)]
@@ -43,6 +43,15 @@
                  :on-key-down #(case (.-which %)
                                  13 (save)
                                  nil)}])))
+(defn edit-did-mount [this]
+  (let [el (reagent/dom-node this)
+        end (-> el .-value .-length)]
+    (set! (.-selectionStart el) end)
+    (set! (.-selectionEnd el) end)))
+
+(defn edit [item id]
+  (reagent/create-class {:component-did-mount edit-did-mount ;; for cursor
+                         :reagent-render #(edit-render item id)}))
 
 (defn list-of [items ids]
   [:div.c.6.col
