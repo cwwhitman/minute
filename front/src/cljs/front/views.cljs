@@ -77,7 +77,7 @@
       
 
 (defn debug-button []
-  [:a.btn {:on-click #(re-frame/dispatch [:add-neighbor])} "add-neighbor"])
+  [:a.btn {:on-click #(re-frame/dispatch [:add-neighbor])} "add-neighbor"]) ;;TODO make these buttons dynamic/specified in db, dependent on currently previewing
 (defn debug-button-2 []
   [:a.btn {:on-click #(re-frame/dispatch [:add-child])} "add-child"])
 

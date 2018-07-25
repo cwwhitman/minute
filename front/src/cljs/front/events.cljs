@@ -98,7 +98,7 @@
                   (update :id->data assoc id (make-new-item "child"))
                   (update-in [:id->data current :children] conj id)))))       
 
-(re-frame/reg-event-fx
+(re-frame/reg-event-fx ;;TODO make this focus/edit the new child
  :add-child
  [(re-frame/inject-cofx :currently-previewing)]
  (fn-traced [{:keys [db currently-previewing]} _]
