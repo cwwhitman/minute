@@ -86,7 +86,7 @@
 
 
 (defn make-new-item [data]
-  {:data data :state "view" :children []})
+  {:t :node :data data :state "view" :children []})
 
 (re-frame/reg-event-db
  :add-neighbor
@@ -124,4 +124,3 @@
              (-> db
                  (assoc-in [:id->data currently-previewing :state] "view")
                  (assoc-in [:id->data currently-previewing :data] new-data))}))
-;; NEXT add edit-save event

@@ -32,17 +32,18 @@
 
 (defn edit-render [item id] ;; adapted from re-frame todomvc example
   (let [val (reagent/atom (:data item))
-        on-save #(re-frame/dispatch [:edit-save id %]) ;;NEXT implement this idea
+        on-save #(re-frame/dispatch [:edit-save id %])
         save #(let [v (-> @val str str/trim)]
                 (on-save v))]
     (fn [item id] ;; not 100% sure why I need this, read the docs on level 2/3 components
-        [:input {:type "text"
-                 :value @val
-                 :auto-focus true
-                 :on-change #(reset! val (-> % .-target .-value))
-                 :on-key-down #(case (.-which %)
-                                 13 (save)
-                                 nil)}])))
+      [:input.inp {:type "text"
+                   :value @val
+                   :auto-focus true
+                   :on-change #(reset! val (-> % .-target .-value))
+                   :on-key-down #(case (.-which %)
+                                   13 (save)
+                                   nil)}])))
+
 (defn edit-did-mount [this]
   (let [el (reagent/dom-node this)
         end (-> el .-value .-length)]
@@ -106,6 +107,19 @@
                            (str title " / ")])
       (last path)]]))
 
+(defn action-bar []
+  (let [item @(re-frame/subscribe [::subs/item-currently-previewing])
+        type (:t item)
+        types @(re-frame/subscribe [::subs/types])
+        events (:keybinds (:events (get types type)))]
+        
+    (re-frame/dispatch [::rp/set-keydown-rules {:event-keys events}])
+    [:div (str events)]))
+
+;; NEXT make action bar sub to only ::/preview-frame-type
+;; then this view can dispatch the kb event and it will be good
+
+
 
 (defn debug-button []
   [:a.btn {:on-click #(re-frame/dispatch [:add-neighbor])} "add-neighbor"]) ;;TODO make these buttons dynamic/specified in db, dependent on currently previewing
@@ -118,6 +132,7 @@
    [path]
    [debug-button]
    [debug-button-2]
+   #_[action-bar]
    [:div.row
     [selected]
     [preview]]])

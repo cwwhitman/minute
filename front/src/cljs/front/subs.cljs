@@ -42,11 +42,18 @@
    (get id->data currently-selected)))
 
 (re-frame/reg-sub
- ::items-currently-previewing
+ ::item-currently-previewing
  :<- [::currently-previewing]
  :<- [:id->data]
  (fn [[currently-previewing id->data] _]
-   (for [id (:children (get id->data currently-previewing))]
+    (get id->data currently-previewing)))
+
+(re-frame/reg-sub
+ ::items-currently-previewing
+ :<- [::item-currently-previewing]
+ :<- [:id->data]
+ (fn [[item-currently-previewing id->data] _]
+   (for [id (:children item-currently-previewing)]
      (get id->data id)))) ;; I wish this did :data in a different sub, but oh well
 
 (re-frame/reg-sub
@@ -56,7 +63,6 @@
  (fn [[currently-previewing id->data] _]
    (:children (get id->data currently-previewing))))
    
-
 (re-frame/reg-sub
  ::length-of-selected
  :<- [::items-in-currently-selected]
@@ -99,3 +105,8 @@
  ::navigation-stack-ids
  (fn [db]
    (:navigation-stack db)))
+
+(re-frame/reg-sub
+ ::types
+ (fn [db _]
+   (:types db)))
