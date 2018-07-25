@@ -107,3 +107,13 @@
                        (assoc :max-id (inc id))
                        (update :id->data assoc id (make-new-item "child"))
                        (update-in [:id->data currently-previewing :children] conj id))})))       
+
+(re-frame/reg-event-fx
+ :edit
+ [(re-frame/inject-cofx :currently-previewing)]
+ (fn-traced [{:keys [db currently-previewing]} _]
+            {:db
+             (-> db
+                 (assoc-in [:id->data currently-previewing :state] "edit"))}))
+
+;; NEXT add edit-save event

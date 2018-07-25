@@ -34,6 +34,9 @@
    [::rp/set-keydown-rules
     {:event-keys [
                   [
+                   [:edit]
+                   [{:which 85}]]
+                  [
                    [:out]
                    [{:which 27}]]
                   [

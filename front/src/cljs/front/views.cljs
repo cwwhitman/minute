@@ -2,6 +2,8 @@
   (:require
    [re-frame.core :as re-frame]
    [re-pressed.core :as rp]
+   [reagent.core :as reagent]
+   [clojure.string :as str]
    [front.subs :as subs]))
 ;; keyboard
 
@@ -28,6 +30,20 @@
      (if (pos? num)
         [:div.right.small num]))])
 
+(defn edit [item id] ;; adapted from re-frame todomvc example
+  (let [val (reagent/atom "st")
+        on-save #(re-frame/dispatch [:edit id %])
+        save #(let [v (-> @val str str/trim)]
+                (on-save v))]
+    ;; NEXT fix this component
+    [:input {:type "text"
+             :value @val
+             :auto-focus true
+             :on-change #(do (println (-> % .-target .-value))(reset! val (-> % .-target .-value)))
+             :on-key-down #(case (.-which %)
+                                13 (save)
+                                nil)}]))
+
 (defn list-of [items ids]
   [:div.c.6.col
    [:div.container.card
@@ -40,7 +56,12 @@
   [:div.c.6.col
    [:div.container.card
     (let [func (fn [[i item id]]
-                ^{:key id} [:div.item {:class (if (= i @selected) "highlighted")} [row item]])]
+                 ^{:key id} [:div.item {:class (if (= i @selected) "highlighted")}
+                             (case (:state item) ;;TODO make these view functions pluggable
+                               "view" [row item id]
+                               "edit" [edit item])])]
+
+                             
         (doall (map (comp func vector) (range) @items @ids)))]])
 
 
