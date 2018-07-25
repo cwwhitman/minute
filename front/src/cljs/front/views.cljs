@@ -32,17 +32,16 @@
 
 (defn edit [item id] ;; adapted from re-frame todomvc example
   (let [val (reagent/atom "st")
-        on-save #(re-frame/dispatch [:edit id %])
+        on-save #(re-frame/dispatch [:edit-save id %]) ;;NEXT implement this idea
         save #(let [v (-> @val str str/trim)]
                 (on-save v))]
-    ;; NEXT fix this component
-    [:input {:type "text"
-             :value @val
-             :auto-focus true
-             :on-change #(do (println (-> % .-target .-value))(reset! val (-> % .-target .-value)))
-             :on-key-down #(case (.-which %)
-                                13 (save)
-                                nil)}]))
+    (fn [item id] ;; not 100% sure why I need this, read the docs on level 2/3 components
+        [:input {:type "text"
+                 :value @val
+                 :on-change #(reset! val (-> % .-target .-value))
+                 :on-key-down #(case (.-which %)
+                                 13 (save)
+                                 nil)}])))
 
 (defn list-of [items ids]
   [:div.c.6.col
@@ -50,7 +49,7 @@
     (doall
      (for [[item id] (map vector @items @ids)]
        ^{:key id} [:div.item
-                     [row item]]))]])
+                   [row item]]))]])
 
 (defn list-of-select [items ids selected]
   [:div.c.6.col
@@ -58,11 +57,12 @@
     (let [func (fn [[i item id]]
                  ^{:key id} [:div.item {:class (if (= i @selected) "highlighted")}
                              (case (:state item) ;;TODO make these view functions pluggable
-                               "view" [row item id]
-                               "edit" [edit item])])]
+                               "view" [row item]
+                               "edit" [edit item id]
+                               [row item id])])]
 
-                             
-        (doall (map (comp func vector) (range) @items @ids)))]])
+      
+      (doall (map (comp func vector) (range) @items @ids)))]])
 
 
 (defn selected []
@@ -75,7 +75,7 @@
   [:div.c.6.col
    [:div
     [:div]]])
-        
+
 
 (defn preview []
   (let [items (re-frame/subscribe [::subs/items-currently-previewing])
@@ -88,14 +88,14 @@
   (let [path @(re-frame/subscribe [::subs/navigation-stack-titles])
         path-ids @(re-frame/subscribe [::subs/navigation-stack-ids])]
     [:div
-        ;; [:a.btn
-            ;; {:on-click #(re-frame/dispatch [:go 0])} "press me or die"
+     ;; [:a.btn
+     ;; {:on-click #(re-frame/dispatch [:go 0])} "press me or die"
      [:div.container.card.m2.pad
       (for [[title id render-id] (map vector (cons "home" path) path-ids (range))]
         ^{:key render-id} [:a {:on-click #(re-frame/dispatch [:go id])}
-                            (str title " / ")])
+                           (str title " / ")])
       (last path)]]))
-      
+
 
 (defn debug-button []
   [:a.btn {:on-click #(re-frame/dispatch [:add-neighbor])} "add-neighbor"]) ;;TODO make these buttons dynamic/specified in db, dependent on currently previewing
@@ -104,10 +104,10 @@
 
 (defn home-panel []
   [:div
-    [home-title]
-    [path]
-    [debug-button]
-    [debug-button-2]
+   [home-title]
+   [path]
+   [debug-button]
+   [debug-button-2]
    [:div.row
     [selected]
     [preview]]])

@@ -86,7 +86,7 @@
 
 
 (defn make-new-item [data]
-  {:data data :children []})
+  {:data data :state "view" :children []})
 
 (re-frame/reg-event-db
  :add-neighbor
