@@ -37,27 +37,27 @@
 (re-frame/reg-event-fx
  :in
  [(re-frame/inject-cofx :currently-previewing)]
- (fn-traced [cofx _]
+ (fn-traced [cofx [_ idx]]
             (let [db (:db cofx)
                   id->data (:id->data db)
                   currently-previewing (:currently-previewing cofx)]
+              (console.log idx)
               (if (empty? (get-in id->data [currently-previewing :children])) ;; bad, this should not be in view
                 {:db db}
                 {:db (-> db
-                         (assoc :preview-frame-visual 0)
+                         (assoc :preview-frame-visual (if (integer? idx) idx 0))
                          (assoc :selected-frame-id currently-previewing)
                          (update :navigation-stack conj (:selected-frame-id db))
                          (update :navigation-stack-titles conj (get-in id->data [currently-previewing :data])))}))))
 
-
+;;TODO make preview(global-idx) function
 
 (re-frame/reg-cofx
  :currently-previewing
  (fn [cofx _] ;; bad because im not supposed to use a sub in
    ;; an event handler if it's not in a view also, according to 
    ;; https://github.com/vimsical/re-frame-utils/blob/master/src/vimsical/re_frame/cofx/inject.cljc
-   (assoc cofx :currently-previewing @(re-frame/subscribe [::subs/currently-previewing]))))
-
+   (assoc cofx :currently-previewing @(re-frame/subscribe [::subs/currently-previewing])))) 
 (re-frame/reg-event-db
  :out
  (fn-traced [db _]
@@ -84,31 +84,38 @@
                          (subvec (:navigation-stack-titles db) 0 (count newstack)))
                   (assoc :navigation-stack newstack)))))
 
+(defn insert [vec pos item] 
+    (apply conj (subvec vec 0 pos) item (subvec vec pos))) ;; from mark j. reed on google groups
 
 (defn make-new-item [data]
   {:t :node :data data :state "edit" :children []})
 
 (re-frame/reg-event-db
- :add-neighbor ;; NEXT make this put it in the right index
+ :add-neighbor
  (fn-traced [db _]
             (let [id (:max-id db)
-                  current (:selected-frame-id db)]
+                  current (:selected-frame-id db)
+                  current-preview-index (:preview-frame-visual db)]
               (-> db
                   (assoc :max-id (inc id))
-                  (update :id->data assoc id (make-new-item "child"))
-                  (update-in [:id->data current :children] conj id)       
+                  (update :id->data assoc id (make-new-item ""))
+                  (update-in [:id->data current :children] insert (inc current-preview-index) id)       
+                  (update :preview-frame-visual inc)
                   (assoc :max-id (inc id))))))
 
 
 (re-frame/reg-event-fx ;;TODO make this focus/edit the new child
  :add-child
  [(re-frame/inject-cofx :currently-previewing)]
- (fn-traced [{:keys [db currently-previewing]} _]
-            (let [id (:max-id db)]
-              {:db (-> db
-                       (assoc :max-id (inc id))
-                       (update :id->data assoc id (make-new-item "child"))
-                       (update-in [:id->data currently-previewing :children] conj id))})))       
+ (fn-traced [{:keys [db currently-previewing]} _] ;; doesn't work with fn-traced because of ->
+   (let [id (:max-id db)
+         len (-> db :id->data (get currently-previewing) :children (count))]
+     (re-frame/dispatch [:in len]) ;; NEXT have preview frame visual as arg
+     {:db (-> db ;; NEXT make this call in, instead of messing with stuff
+              (update :max-id inc)
+              ;; (assoc :selected-frame-id currently-previewing)
+              (update :id->data assoc id (make-new-item ""))
+              (update-in [:id->data currently-previewing :children] conj id))})))       
 
 (re-frame/reg-event-fx
  :edit
