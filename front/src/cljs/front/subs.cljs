@@ -107,6 +107,30 @@
    (:navigation-stack db)))
 
 (re-frame/reg-sub
- ::types
+ :types
  (fn [db _]
    (:types db)))
+
+(re-frame/reg-sub
+ ::type-currently-previewing
+ :<- [::item-currently-previewing]
+ (fn [item _]
+    (:t item)))
+
+(re-frame/reg-sub
+ ::events-currently-previewing
+ :<- [:types]
+ :<- [::type-currently-previewing]
+ (fn [[types type] _]
+    (:keybinds (:events (get types type)))))
+
+(re-frame/reg-sub
+ ::preview-frame-events
+ :<- [::events-currently-previewing]
+ (fn [events _]
+  events))
+
+(re-frame/reg-sub
+ ::global-events
+ (fn [db _]
+  (:global-keybinds db)))

@@ -71,10 +71,10 @@
                     (assoc :selected-frame-id (last stack)))))))
 
 (re-frame/reg-event-db
- :go ;; TODO needs to update the navigation stack
+ :go
  (fn-traced [db [_ id]]
             (let [curstack (:navigation-stack db)
-                  newstack (loop [stack curstack n id]
+                  newstack (loop [stack curstack n id] ;; TODO for learning, reimp with drop-while
                              (if (= (peek stack) n)
                                (pop stack)
                                (recur (pop stack) n)))]
@@ -86,17 +86,19 @@
 
 
 (defn make-new-item [data]
-  {:t :node :data data :state "view" :children []})
+  {:t :node :data data :state "edit" :children []})
 
 (re-frame/reg-event-db
- :add-neighbor
+ :add-neighbor ;; NEXT make this put it in the right index
  (fn-traced [db _]
             (let [id (:max-id db)
                   current (:selected-frame-id db)]
               (-> db
                   (assoc :max-id (inc id))
                   (update :id->data assoc id (make-new-item "child"))
-                  (update-in [:id->data current :children] conj id)))))       
+                  (update-in [:id->data current :children] conj id)       
+                  (assoc :max-id (inc id))))))
+
 
 (re-frame/reg-event-fx ;;TODO make this focus/edit the new child
  :add-child

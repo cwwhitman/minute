@@ -108,18 +108,12 @@
       (last path)]]))
 
 (defn action-bar []
-  (let [item @(re-frame/subscribe [::subs/item-currently-previewing])
-        type (:t item)
-        types @(re-frame/subscribe [::subs/types])
-        events (:keybinds (:events (get types type)))]
-        
-    (re-frame/dispatch [::rp/set-keydown-rules {:event-keys events}])
+  (let [events @(re-frame/subscribe [::subs/preview-frame-events])
+        global-events @(re-frame/subscribe [::subs/global-events])
+        combined-events (into [] (concat global-events events))]
+    (re-frame/dispatch [::rp/set-keydown-rules {:always-listen-keys [{:which 9}]
+                                                :event-keys combined-events}])
     [:div (str events)]))
-
-;; NEXT make action bar sub to only ::/preview-frame-type
-;; then this view can dispatch the kb event and it will be good
-
-
 
 (defn debug-button []
   [:a.btn {:on-click #(re-frame/dispatch [:add-neighbor])} "add-neighbor"]) ;;TODO make these buttons dynamic/specified in db, dependent on currently previewing
@@ -132,7 +126,7 @@
    [path]
    [debug-button]
    [debug-button-2]
-   #_[action-bar]
+   [action-bar]
    [:div.row
     [selected]
     [preview]]])
